@@ -6,6 +6,10 @@ from iebank_api.models import Account
 def hello_world():
     return 'Hello, World!'
 
+@app.route('/home')
+def welcome_page():
+    return 'This is the Welcome Page'
+
 @app.route('/skull', methods=['GET'])
 def skull():
     text = 'Hi! This is the BACKEND SKULL! 💀 '
