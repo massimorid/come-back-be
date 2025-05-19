@@ -14,10 +14,9 @@ env:
   BACKEND_WEBAPP_DEV: mridella-be-dev
   BACKEND_WEBAPP_UAT: mridella-be-uat
 
-
 jobs:
   build:
-    
+
     runs-on: ubuntu-latest
     env:
       ENV: ghci
@@ -49,9 +48,10 @@ jobs:
       with:
         name: python-app
         path: |
-          . 
+          .
 
   deploy-dev:
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     needs: build
     environment:
@@ -64,40 +64,15 @@ jobs:
       with:
         name: python-app
         path: .
-    
+
     - uses: azure/login@v2
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    - name: 'Deploy to Azure Web App'
+    - name: 'Deploy to Azure Web App Development'
       uses: azure/webapps-deploy@v3
       id: deploy-to-webapp
       with:
         app-name: ${{ env.BACKEND_WEBAPP_DEV }}
         package: .
-    
 
-  # deploy-uat:
-  #   runs-on: ubuntu-latest
-  #   needs: [build, deploy-dev]
-  #   environment:
-  #     name: 'User Acceptance Testing'
-  #     url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-
-  #   steps:
-  #   - name: Download artifact from build job
-  #     uses: actions/download-artifact@v4
-  #     with:
-  #       name: python-app
-  #       path: .
-    
-  #   - uses: azure/login@v2
-  #     with:
-  #       creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-  #   - name: 'Deploy to Azure Web App'
-  #     uses: azure/webapps-deploy@v3
-  #     id: deploy-to-webapp
-  #     with:
-  #       app-name: ${{ env.BACKEND_WEBAPP_UAT }}
-  #       package: .
