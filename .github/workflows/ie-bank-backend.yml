@@ -19,7 +19,7 @@ jobs:
     
     runs-on: ubuntu-latest
     env:
-      ENV: dev
+      ENV: ghci
 
     steps:
     - uses: actions/checkout@v4
