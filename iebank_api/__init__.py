@@ -4,7 +4,6 @@ from flask_cors import CORS
 import os
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///local.db' #uri for local db
 
 
 # Select environment based on the ENV environment variable
