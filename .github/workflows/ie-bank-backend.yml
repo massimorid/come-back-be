@@ -73,6 +73,12 @@ jobs:
         with:
           app-name: ${{ env.BACKEND_WEBAPP_DEV }}
           package: .
+          app-settings: |
+            ENV=uat
+            DBUSER=${{ secrets.DBUSER }}
+            DBPASS=${{ secrets.DBPASS }}
+            DBHOST=${{ vars.DBHOST }}
+            DBNAME=${{ vars.DBNAME }}
 
   deploy-uat:
     runs-on: ubuntu-latest
@@ -99,3 +105,9 @@ jobs:
         with:
           app-name: ${{ env.BACKEND_WEBAPP_UAT }}
           package: .
+          app-settings: |
+            ENV=uat
+            DBUSER=${{ secrets.DBUSER }}
+            DBPASS=${{ secrets.DBPASS }}
+            DBHOST=${{ vars.DBHOST }}
+            DBNAME=${{ vars.DBNAME }}
