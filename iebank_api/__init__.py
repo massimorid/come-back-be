@@ -8,8 +8,6 @@ app = Flask(__name__)
 # Select environment based on the ENV environment variable
 print("ENV: ", os.getenv('ENV'))
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///local.db'
-
 if os.getenv('ENV') == 'local':
     print("Running in local mode")
     app.config.from_object('config.LocalConfig')
@@ -19,6 +17,9 @@ elif os.getenv('ENV') == 'dev':
 elif os.getenv('ENV') == 'ghci':
     print("Running in github mode")
     app.config.from_object('config.GithubCIConfig')
+elif os.getenv('ENV') == 'uat':
+    print("Running in uat mode")
+    app.config.from_object('config.uatConfig')
 
 db = SQLAlchemy(app)
 
