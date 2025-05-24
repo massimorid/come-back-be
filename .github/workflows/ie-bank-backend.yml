@@ -11,8 +11,10 @@ permissions:
   id-token: write
 
 env:
-  BACKEND_WEBAPP_DEV: mridella-be-dev
+  #BACKEND_WEBAPP_DEV: mridella-be-dev
   BACKEND_WEBAPP_UAT: mridella-be-uat
+  BACKEND_WEBAPP_PROD: mridella-be-prod
+  
 
 jobs:
   build:
@@ -36,9 +38,7 @@ jobs:
     - name: Lint with flake8
       run: |
         pip install flake8 pytest
-        # stop the build if there are Python syntax errors or undefined names
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
@@ -50,37 +50,36 @@ jobs:
         path: |
           .
 
-  deploy-dev:
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
-    needs: build
-    environment:
-      name: 'Development'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+  # deploy-dev:
+  #   if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+  #   runs-on: ubuntu-latest
+  #   needs: build
+  #   environment:
+  #     name: 'Development'
+  #     url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
-    steps:
-    - name: Download artifact from build job
-      uses: actions/download-artifact@v4
-      with:
-        name: python-app
-        path: .
+  #   steps:
+  #   - name: Download artifact from build job
+  #     uses: actions/download-artifact@v4
+  #     with:
+  #       name: python-app
+  #       path: .
 
-    - uses: azure/login@v2
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+  #   - uses: azure/login@v2
+  #     with:
+  #       creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    - name: 'Deploy to Azure Web App Development'
-      uses: azure/webapps-deploy@v3
-      id: deploy-to-webapp
-      with:
-        app-name: ${{ env.BACKEND_WEBAPP_DEV }}
-        package: .
+  #   - name: 'Deploy to Azure Web App Development'
+  #     uses: azure/webapps-deploy@v3
+  #     id: deploy-to-webapp
+  #     with:
+  #       app-name: ${{ env.BACKEND_WEBAPP_DEV }}
+  #       package: .
   
   
   deploy-uat:
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
-    needs: [build, deploy-dev]
+    needs: build
     environment:
       name: 'User Acceptance Testing'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
@@ -102,4 +101,28 @@ jobs:
       with:
         app-name: ${{ env.BACKEND_WEBAPP_UAT }}
         package: .
+  
+  deploy-prod:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: 'Production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
+    steps:
+    - name: Download artifact from build job
+      uses: actions/download-artifact@v4
+      with:
+        name: python-app
+        path: .
+
+    - uses: azure/login@v2
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: 'Deploy to Azure Web App Development'
+      uses: azure/webapps-deploy@v3
+      id: deploy-to-webapp
+      with:
+        app-name: ${{ env.BACKEND_WEBAPP_PROD }}
+        package: .
