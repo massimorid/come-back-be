@@ -5,7 +5,7 @@ import os
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///local.db' #uri for local db
-db = SQLAlchemy(app)
+
 
 # Select environment based on the ENV environment variable
 if os.getenv('ENV') == 'local':
@@ -18,6 +18,7 @@ elif os.getenv('ENV') == 'ghci':
     print("Running in github mode")
     app.config.from_object('config.GithubCIConfig')
 
+db = SQLAlchemy(app)
 
 
 from iebank_api.models import Account
