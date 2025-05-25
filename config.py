@@ -23,10 +23,10 @@ class DevelopmentConfig(Config):
 
 class uatConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'postgresql://{dbuser}:{dbpass}@{dbhost}/{dbname}'.format(
-    dbuser=os.getenv('DBUSER'),
-    dbpass=os.getenv('DBPASS'),
-    dbhost=os.getenv('DBHOST'),
-    dbname=os.getenv('DBNAME')
+    dbuser= 'iebankadmin',
+    dbpass= 'IE.Bank.DB.Admin.Pa$$',
+    dbhost= 'massimoridella-dbsrv-uat.postgres.database.azure.com',
+    dbname= 'massimoridella-db-uat'
     )
     DEBUG = True
 

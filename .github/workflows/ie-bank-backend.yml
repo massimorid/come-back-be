@@ -91,6 +91,17 @@ jobs:
         name: python-app
         path: .
 
+    - name: Debug Environment Variables
+      run: |
+        echo "=== Environment Variables for UAT ==="
+        echo "BACKEND_WEBAPP_UAT: ${{ env.BACKEND_WEBAPP_UAT }}"
+        echo "ENV: ${{ env.ENV }}"
+        echo "DBHOST: ${{ vars.DBHOST }}"
+        echo "DBNAME: ${{ vars.DBNAME }}"
+        echo "FLASK_APP: ${{ vars.FLASK_APP }}"
+        echo "FLASK_DEBUG: ${{ vars.FLASK_DEBUG }}"
+        echo "=== End Environment Variables ==="
+
     - uses: azure/login@v2
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
@@ -115,6 +126,17 @@ jobs:
       with:
         name: python-app
         path: .
+
+    - name: Debug Environment Variables
+      run: |
+        echo "=== Environment Variables for PROD ==="
+        echo "BACKEND_WEBAPP_PROD: ${{ env.BACKEND_WEBAPP_PROD }}"
+        echo "ENV: ${{ env.ENV }}"
+        echo "DBHOST: ${{ vars.DBHOST }}"
+        echo "DBNAME: ${{ vars.DBNAME }}"
+        echo "FLASK_APP: ${{ vars.FLASK_APP }}"
+        echo "FLASK_DEBUG: ${{ vars.FLASK_DEBUG }}"
+        echo "=== End Environment Variables ==="
 
     - uses: azure/login@v2
       with:
