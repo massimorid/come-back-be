@@ -11,9 +11,9 @@ permissions:
   id-token: write
 
 env:
-  #BACKEND_WEBAPP_DEV: mridella-be-dev
-  BACKEND_WEBAPP_UAT: mridella-be-uat
-  BACKEND_WEBAPP_PROD: mridella-be-prod
+  #BACKEND_WEBAPP_DEV: massimoridella-be-dev
+  BACKEND_WEBAPP_UAT: massimoridella-be-uat
+  BACKEND_WEBAPP_PROD: massimoridella-be-prod
   
 
 jobs:
