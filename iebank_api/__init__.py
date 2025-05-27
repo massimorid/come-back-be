@@ -11,7 +11,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///local.db' #uri for local db
 if os.getenv('ENV') == 'local':
     print("Running in local mode")
     app.config.from_object('config.LocalConfig')
-elif os.getenv('ENV') == 'dev':
+elif os.getenv('ENV') == 'development':
     print("Running in development mode")
     app.config.from_object('config.DevelopmentConfig')
 elif os.getenv('ENV') == 'ghci':
