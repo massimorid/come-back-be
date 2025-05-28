@@ -16,4 +16,4 @@ COPY . .
 EXPOSE 5000
 
 #Every time my container runs, this command will be executed
-ENTRYPOINT [ "python", "-m", "flask" , "run", "--host=0.0.0.0" ]
+CMD [ "python", "-m", "flask" , "run", "--host=0.0.0.0" ]
