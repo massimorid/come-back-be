@@ -12,6 +12,8 @@ permissions:
 
 env:
   BACKEND_WEBAPP_DEV: mridella-be-dev
+  ACR_NAME_DEV: mridellaacr
+  IMAGE_NAME: mridella-asc-backend
   #BACKEND_WEBAPP_UAT: mridella-be-uat
 
 jobs:
@@ -68,38 +70,35 @@ jobs:
     - uses: azure/login@v2
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
+    
+    - name: 'Get ACR credentials from Dev Key Vault'
+      uses: azure/get-keyvault-secrets@v1
+      with:
+        keyvault: "mridella-kv"
+        secrets: 'registry-username, registry-password'
+      id: devKeyvaultSecrets
+
+    - name: 'Build and push image for Dev'
+      uses: azure/docker-login@v1
+      with:
+        login-server: ${{ env.ACR_NAME_DEV }}.azurecr.io
+        username: ${{ steps.devKeyvaultSecrets.outputs.registry-username }}
+        password: ${{ steps.devKeyvaultSecrets.outputs.registry-password }}
+
+    - name: 'Build and push container image for Dev'
+      run: |
+          cd backend
+          docker build . -t ${{ env.ACR_NAME_DEV }}.azurecr.io/${{ env.IMAGE_NAME }}-dev
+          docker tag ${{ env.ACR_NAME_DEV }}.azurecr.io/${{ env.IMAGE_NAME }}-dev ${{ env.ACR_NAME_DEV }}.azurecr.io/${{ env.IMAGE_NAME }}-dev:${{ github.sha }}
+          docker push ${{ env.ACR_NAME_DEV }}.azurecr.io/${{ env.IMAGE_NAME }}-dev:${{ github.sha }}
+          docker push ${{ env.ACR_NAME_DEV }}.azurecr.io/${{ env.IMAGE_NAME }}-dev
 
     - name: 'Deploy to Azure Web App Development'
       uses: azure/webapps-deploy@v3
       id: deploy-to-webapp
       with:
         app-name: ${{ env.BACKEND_WEBAPP_DEV }}
+        images: ${{ env.ACR_NAME_DEV }}.azurecr.io/${{ env.IMAGE_NAME }}-dev:latest
         package: .
   
   
-  # deploy-uat:
-  #   if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-  #   runs-on: ubuntu-latest
-  #   needs: [build, deploy-dev]
-  #   environment:
-  #     name: 'User Acceptance Testing'
-  #     url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-
-  #   steps:
-  #   - name: Download artifact from build job
-  #     uses: actions/download-artifact@v4
-  #     with:
-  #       name: python-app
-  #       path: .
-
-  #   - uses: azure/login@v2
-  #     with:
-  #       creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-  #   - name: 'Deploy to Azure Web App Development'
-  #     uses: azure/webapps-deploy@v3
-  #     id: deploy-to-webapp
-  #     with:
-  #       app-name: ${{ env.BACKEND_WEBAPP_UAT }}
-  #       package: .
-
